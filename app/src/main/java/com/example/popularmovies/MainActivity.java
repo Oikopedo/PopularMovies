@@ -1,6 +1,7 @@
 package com.example.popularmovies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -56,9 +57,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     @Override
     public void onClick(Movie movie) {
-        Context context = this;
-        Toast.makeText(this, movie.toString(), Toast.LENGTH_SHORT)
-                .show();
+        startActivity(new Intent(this,DetailActivity.class));
     }
 
     public class FetchMovies extends AsyncTask<String,Void, Movie[]>{
