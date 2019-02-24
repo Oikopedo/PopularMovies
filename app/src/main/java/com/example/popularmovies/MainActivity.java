@@ -57,7 +57,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     @Override
     public void onClick(Movie movie) {
-        startActivity(new Intent(this,DetailActivity.class));
+        Intent intent=new Intent(this,DetailActivity.class);
+        intent.putExtra("Movie",movie);
+        startActivity(intent);
     }
 
     public class FetchMovies extends AsyncTask<String,Void, Movie[]>{

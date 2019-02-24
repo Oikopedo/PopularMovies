@@ -2,14 +2,16 @@ package com.example.popularmovies.Movie;
 
 import android.widget.ImageView;
 
-public class Movie {
+import java.io.Serializable;
+
+public class Movie implements Serializable {
     private String name;
     private String imageSource;
     private String synopsis;
     private float rating;
     private String releaseDate;
 
-    public Movie(String name,String imageSource,String synopsis,float rating,String releaseDate ){
+    public Movie(String name,String imageSource,String synopsis,float rating,String releaseDate ) {
         this.name=name;
         this.imageSource=imageSource;
         this.synopsis=synopsis;
