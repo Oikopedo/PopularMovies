@@ -1,5 +1,6 @@
 package com.example.popularmovies;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,12 +12,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.popularmovies.Movie.Movie;
 import com.example.popularmovies.NetworkUtils.NetworkUtils;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
     private static final String BASE_URL="http://api.themoviedb.org/3/movie";
     private static final String POPULAR_PATH="/popular";
     private static final String TOP_RATED_PATH="/top_rated";
@@ -45,11 +47,18 @@ public class MainActivity extends AppCompatActivity {
         }
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
-        mMovieAdapter = new MovieAdapter();
+        mMovieAdapter = new MovieAdapter(this);
         mRecyclerView.setAdapter(mMovieAdapter);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         loadMoviesData();
 
+    }
+
+    @Override
+    public void onClick(Movie movie) {
+        Context context = this;
+        Toast.makeText(this, movie.toString(), Toast.LENGTH_SHORT)
+                .show();
     }
 
     public class FetchMovies extends AsyncTask<String,Void, Movie[]>{

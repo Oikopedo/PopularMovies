@@ -1,6 +1,7 @@
 package com.example.popularmovies;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -17,18 +18,30 @@ import com.squareup.picasso.Picasso;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
     private Movie[] mMoviedData;
+    private final MovieAdapterOnClickHandler mClickHandler;
 
-    public MovieAdapter(){
-
+    public interface MovieAdapterOnClickHandler {
+        void onClick(Movie movie);
     }
-    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder{
+
+    public MovieAdapter(MovieAdapterOnClickHandler clickHandler) {
+        mClickHandler = clickHandler;
+    }
+
+    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final ImageView mMovieImageView;
 
         public MovieAdapterViewHolder(View view){
             super(view);
             mMovieImageView=(ImageView) view.findViewById(R.id.tv_movie_data);
+            view.setOnClickListener(this);
+        }
+        @Override
+        public void onClick(View v) {
+            mClickHandler.onClick(mMoviedData[getAdapterPosition()]);
         }
     }
+
     @Override
     public MovieAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());

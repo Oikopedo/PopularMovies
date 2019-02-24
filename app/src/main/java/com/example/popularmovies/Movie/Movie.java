@@ -8,7 +8,6 @@ public class Movie {
     private String synopsis;
     private float rating;
     private String releaseDate;
-    private ImageView image;
 
     public Movie(String name,String imageSource,String synopsis,float rating,String releaseDate ){
         this.name=name;
@@ -23,9 +22,6 @@ public class Movie {
                 +rating+" releaseDate: "+releaseDate;
     }
 
-    public void setImage(ImageView image) {
-        this.image = image;
-    }
 
     public String getName(){
         return name;
@@ -47,8 +43,5 @@ public class Movie {
         return releaseDate;
     }
 
-    public ImageView getImage() {
-        return image;
-    }
 }
 
