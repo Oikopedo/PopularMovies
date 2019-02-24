@@ -1,7 +1,5 @@
 package com.example.popularmovies.Movie;
 
-import android.widget.ImageView;
-
 import java.io.Serializable;
 
 public class Movie implements Serializable {

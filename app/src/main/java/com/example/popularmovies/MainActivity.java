@@ -1,19 +1,18 @@
 package com.example.popularmovies;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.popularmovies.Movie.Movie;
 import com.example.popularmovies.NetworkUtils.NetworkUtils;
@@ -34,6 +33,31 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private ProgressBar mLoadingIndicator;
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        // TODO (7) Override onOptionsItemSelected to handle clicks on the refresh button
+        if (id == R.id.sort_popular) {
+            //mRecyclerView.setAdapter(new MovieAdapter(this));
+            loadMoviesData(BASE_URL+POPULAR_PATH+QUERY);
+            return true;
+        }
+        if (id==R.id.sort_top_rated){
+            //mRecyclerView.setAdapter(new MovieAdapter(this));
+            loadMoviesData(BASE_URL+TOP_RATED_PATH+QUERY);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -51,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mMovieAdapter = new MovieAdapter(this);
         mRecyclerView.setAdapter(mMovieAdapter);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-        loadMoviesData();
+        loadMoviesData(BASE_URL+POPULAR_PATH+QUERY);
 
     }
 
@@ -95,10 +119,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     }
 
-    private void loadMoviesData() {
+    private void loadMoviesData(String url) {
         showMoviesDataView();
 
-        new FetchMovies().execute(BASE_URL+POPULAR_PATH+QUERY);
+        new FetchMovies().execute(url);
     }
 
     private void showMoviesDataView() {
