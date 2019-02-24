@@ -3,6 +3,7 @@ package com.example.popularmovies.NetworkUtils;
 import android.util.Log;
 
 import com.example.popularmovies.Movie.Movie;
+import com.example.popularmovies.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +16,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class NetworkUtils {
+    private static final String KEY_RESULTS="results";
+    private static final String KEY_NAME="original_title";
+    private static final String KEY_IMAGE_SOURCE="poster_path";
+    private static final String KEY_SYNOPSIS="overview";
+    private static final String KEY_RATING="vote_average";
+    private static final String KEY_RELEASE_DATE="release_date";
+
     public static String responseFromHttpGetRequest(String urlString)throws Exception{
         StringBuilder json = new StringBuilder();
         URL url=new URL(urlString);
@@ -39,20 +47,20 @@ public class NetworkUtils {
     public static Movie[] parseResponse(String response){
         try {
             JSONObject obj = new JSONObject(response);
-            JSONArray res=obj.getJSONArray("results");
+            JSONArray res=obj.getJSONArray(KEY_RESULTS);
             Movie[] movies=new Movie[res.length()];
             JSONObject movie;
             for (int i=0;i<movies.length;i++){
                 movie=res.getJSONObject(i);
-                movies[i]=new Movie(movie.getString("original_title")
-                        ,movie.getString("poster_path")
-                        ,movie.getString("overview")
-                        ,(float)movie.getDouble("vote_average")
-                        ,movie.getString("release_date"));
+                movies[i]=new Movie(movie.getString(KEY_NAME)
+                        ,movie.getString(KEY_IMAGE_SOURCE)
+                        ,movie.getString(KEY_SYNOPSIS)
+                        ,(float)movie.getDouble(KEY_RATING)
+                        ,movie.getString(KEY_RELEASE_DATE));
             }
-            for (Movie m: movies){
-                Log.v("Movie",m.toString());
-            }
+            //for (Movie m: movies){
+            //    Log.v("Movie",m.toString());
+            //}
             return movies;
         }catch (JSONException e){
             e.printStackTrace();

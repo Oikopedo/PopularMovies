@@ -42,14 +42,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        // TODO (7) Override onOptionsItemSelected to handle clicks on the refresh button
         if (id == R.id.sort_popular) {
-            //mRecyclerView.setAdapter(new MovieAdapter(this));
+            mRecyclerView.setVisibility(View.INVISIBLE);
             loadMoviesData(BASE_URL+POPULAR_PATH+QUERY);
             return true;
         }
         if (id==R.id.sort_top_rated){
-            //mRecyclerView.setAdapter(new MovieAdapter(this));
+            mRecyclerView.setVisibility(View.INVISIBLE);
             loadMoviesData(BASE_URL+TOP_RATED_PATH+QUERY);
             return true;
         }
@@ -64,12 +63,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mRecyclerView= (RecyclerView) findViewById(R.id.recycler_view);
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
         GridLayoutManager layoutManager =new GridLayoutManager(this,2);
-        if (mRecyclerView==null){
-            Log.v("Log","recycler null");
-        }
-        if (layoutManager==null){
-            Log.v("Log","layoutmanager null");
-        }
+        //if (mRecyclerView==null){
+        //    Log.v("Log","recycler null");
+        //}
+        //if (layoutManager==null){
+        //    Log.v("Log","layoutmanager null");
+        //}
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
         mMovieAdapter = new MovieAdapter(this);
@@ -82,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     @Override
     public void onClick(Movie movie) {
         Intent intent=new Intent(this,DetailActivity.class);
-        intent.putExtra("Movie",movie);
+        intent.putExtra(DetailActivity.EXTRA,movie);
         startActivity(intent);
     }
 
@@ -110,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movies != null) {
                 showMoviesDataView();
-                // COMPLETED (45) Instead of iterating through every string, use mForecastAdapter.setWeatherData and pass in the weather data
                 mMovieAdapter.setmMoviedData(movies);
             } else {
                 showErrorMessage();
@@ -120,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     }
 
     private void loadMoviesData(String url) {
-        showMoviesDataView();
 
         new FetchMovies().execute(url);
     }
@@ -132,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private void showErrorMessage() {
         mRecyclerView.setVisibility(View.INVISIBLE);
-        /* Then, show the error */
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 

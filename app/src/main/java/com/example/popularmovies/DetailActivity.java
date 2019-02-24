@@ -10,7 +10,12 @@ import android.widget.TextView;
 import com.example.popularmovies.Movie.Movie;
 import com.squareup.picasso.Picasso;
 
+import java.net.URL;
+
 public class DetailActivity extends AppCompatActivity {
+
+    public final static String EXTRA="Movie";
+    public final static String IMAGE_PATH="http://image.tmdb.org/t/p/w500/";
 
     private Movie mMovie;
     private TextView mMovieName;
@@ -32,12 +37,11 @@ public class DetailActivity extends AppCompatActivity {
 
         Intent intent=getIntent();
         if(intent!=null){
-            if(intent.hasExtra("Movie")){
-                mMovie=(Movie)intent.getSerializableExtra("Movie");
+            if(intent.hasExtra(EXTRA)){
+                mMovie=(Movie)intent.getSerializableExtra(EXTRA);
 
                 mMovieName.setText(mMovie.getName());
-
-                Uri uri=Uri.parse("http://image.tmdb.org/t/p/w500/"+mMovie.getImageSource())
+                Uri uri=Uri.parse(IMAGE_PATH+mMovie.getImageSource())
                         .buildUpon().build();
                 Picasso.get().load(uri).into(mMovieImage);
 
@@ -46,6 +50,5 @@ public class DetailActivity extends AppCompatActivity {
                 mMovieReleaseDate.setText(mMovie.getReleaseDate());
             }
         }
-
     }
 }
