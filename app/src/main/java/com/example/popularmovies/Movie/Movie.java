@@ -1,11 +1,14 @@
 package com.example.popularmovies.Movie;
 
+import android.widget.ImageView;
+
 public class Movie {
     private String name;
     private String imageSource;
     private String synopsis;
     private float rating;
     private String releaseDate;
+    private ImageView image;
 
     public Movie(String name,String imageSource,String synopsis,float rating,String releaseDate ){
         this.name=name;
@@ -18,6 +21,10 @@ public class Movie {
     public String toString(){
         return "name: "+name+" imageSource: "+imageSource+" synopsis: "+synopsis+" rating: "
                 +rating+" releaseDate: "+releaseDate;
+    }
+
+    public void setImage(ImageView image) {
+        this.image = image;
     }
 
     public String getName(){
@@ -38,6 +45,10 @@ public class Movie {
 
     public String getReleaseDate(){
         return releaseDate;
+    }
+
+    public ImageView getImage() {
+        return image;
     }
 }
 
