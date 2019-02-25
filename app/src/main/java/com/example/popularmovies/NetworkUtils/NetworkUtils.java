@@ -1,9 +1,7 @@
 package com.example.popularmovies.NetworkUtils;
 
-import android.util.Log;
 
 import com.example.popularmovies.Movie.Movie;
-import com.example.popularmovies.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,7 +21,7 @@ public class NetworkUtils {
     private static final String KEY_RATING="vote_average";
     private static final String KEY_RELEASE_DATE="release_date";
 
-    public static String responseFromHttpGetRequest(String urlString)throws Exception{
+    private static String responseFromHttpGetRequest(String urlString)throws Exception{
         StringBuilder json = new StringBuilder();
         URL url=new URL(urlString);
         HttpURLConnection con=(HttpURLConnection) url.openConnection();
@@ -44,7 +42,7 @@ public class NetworkUtils {
         return null;
     }
 
-    public static Movie[] parseResponse(String response){
+    private static Movie[] parseResponse(String response){
         try {
             JSONObject obj = new JSONObject(response);
             JSONArray res=obj.getJSONArray(KEY_RESULTS);
