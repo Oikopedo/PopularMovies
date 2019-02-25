@@ -12,7 +12,7 @@ import com.example.popularmovies.Movie.Movie;
 import com.squareup.picasso.Picasso;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
-    private Movie[] mMoviedData;
+    private Movie[] mMovieData;
     private final MovieAdapterOnClickHandler mClickHandler;
 
     public interface MovieAdapterOnClickHandler {
@@ -33,7 +33,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         }
         @Override
         public void onClick(View v) {
-            mClickHandler.onClick(mMoviedData[getAdapterPosition()]);
+            mClickHandler.onClick(mMovieData[getAdapterPosition()]);
         }
     }
 
@@ -46,7 +46,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     @Override
     public void onBindViewHolder(@NonNull MovieAdapterViewHolder movieAdapterViewHolder, int i) {
-        Uri uri=Uri.parse(DetailActivity.IMAGE_PATH+mMoviedData[i].getImageSource())
+        Uri uri=Uri.parse(DetailActivity.IMAGE_PATH+mMovieData[i].getImageSource())
                 .buildUpon().build();
         //Log.v("URI GAGARIN",uri.toString());
 
@@ -54,11 +54,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     }
     @Override
     public int getItemCount() {
-        if (null == mMoviedData) return 0;
-        return mMoviedData.length;
+        if (null == mMovieData) return 0;
+        return mMovieData.length;
     }
-    public void setmMoviedData(Movie[] moviedData) {
-        mMoviedData = moviedData;
+    public void setmMovieData(Movie[] movieData) {
+        mMovieData = movieData;
         notifyDataSetChanged();
     }
 }

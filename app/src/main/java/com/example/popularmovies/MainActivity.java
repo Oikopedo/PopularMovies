@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         startActivity(intent);
     }
 
-    public class FetchMovies extends AsyncTask<String,Void, Movie[]>{
+    private class FetchMovies extends AsyncTask<String,Void, Movie[]>{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movies != null) {
                 showMoviesDataView();
-                mMovieAdapter.setmMoviedData(movies);
+                mMovieAdapter.setmMovieData(movies);
             } else {
                 showErrorMessage();
             }
