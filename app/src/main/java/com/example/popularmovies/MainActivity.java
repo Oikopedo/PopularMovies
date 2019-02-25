@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private ProgressBar mLoadingIndicator;
 
+    private static String choice=BASE_URL+POPULAR_PATH+QUERY;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -44,12 +46,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         if (id == R.id.sort_popular) {
             mRecyclerView.setVisibility(View.INVISIBLE);
-            loadMoviesData(BASE_URL+POPULAR_PATH+QUERY);
+            choice=BASE_URL+POPULAR_PATH+QUERY;
+            loadMoviesData(choice);
             return true;
         }
         if (id==R.id.sort_top_rated){
             mRecyclerView.setVisibility(View.INVISIBLE);
-            loadMoviesData(BASE_URL+TOP_RATED_PATH+QUERY);
+            choice=BASE_URL+TOP_RATED_PATH+QUERY;
+            loadMoviesData(choice);
             return true;
         }
 
@@ -74,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mMovieAdapter = new MovieAdapter(this);
         mRecyclerView.setAdapter(mMovieAdapter);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-        loadMoviesData(BASE_URL+POPULAR_PATH+QUERY);
+        loadMoviesData(choice);
 
     }
 
