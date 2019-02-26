@@ -12,6 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.net.ConnectivityManager;
+import android.content.Context;
+import android.net.NetworkInfo;
 
 import com.example.popularmovies.Movie.Movie;
 import com.example.popularmovies.NetworkUtils.NetworkUtils;
@@ -121,8 +124,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     }
 
     private void loadMoviesData(String url) {
+        ConnectivityManager cm =
+                (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        new FetchMovies().execute(url);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        if (isConnected) {
+            new FetchMovies().execute(url);
+        }else{
+            new FetchMovies().execute((String)null);
+        }
     }
 
     private void showMoviesDataView() {
