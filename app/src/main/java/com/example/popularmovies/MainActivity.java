@@ -1,7 +1,11 @@
 package com.example.popularmovies;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,15 +16,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.net.ConnectivityManager;
-import android.content.Context;
-import android.net.NetworkInfo;
 
 import com.example.popularmovies.Movie.Movie;
 import com.example.popularmovies.NetworkUtils.NetworkUtils;
 
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler
+        , LoaderManager.LoaderCallbacks<Movie[]> {
     private static final String BASE_URL="http://api.themoviedb.org/3/movie";
     private static final String POPULAR_PATH="/popular";
     private static final String TOP_RATED_PATH="/top_rated";
@@ -36,6 +38,65 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private static String choice=BASE_URL+POPULAR_PATH+QUERY;
 
+    private static final int MOVIE_LOADER_ID = 0;
+
+
+    @NonNull
+    @Override
+    public Loader<Movie[]> onCreateLoader(int id, @Nullable Bundle args) {
+        return new AsyncTaskLoader<Movie[]>(this) {
+
+            Movie[] mMovies=null;
+
+            @Override
+            protected void onStartLoading() {
+                if(mMovies!=null){
+                    deliverResult(mMovies);
+                }else{
+                    mLoadingIndicator.setVisibility(View.VISIBLE);
+                    forceLoad();
+                }
+            }
+
+            @Nullable
+            @Override
+            public Movie[] loadInBackground() {
+                try{
+                    return NetworkUtils.getMovies(choice);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            public void deliverResult(@Nullable Movie[] data) {
+                mMovies=data;
+                super.deliverResult(data);
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Movie[]> loader, Movie[] data) {
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        mMovieAdapter.setmMovieData(data);
+        if (data==null){
+            showErrorMessage();
+        }else {
+            showMoviesDataView();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Movie[]> loader) {
+
+    }
+
+    private void invalidateData(){
+        mMovieAdapter.setmMovieData(null);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -49,13 +110,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         if (id == R.id.sort_popular) {
             mRecyclerView.setVisibility(View.INVISIBLE);
             choice=BASE_URL+POPULAR_PATH+QUERY;
-            loadMoviesData(choice);
+            //loadMoviesData(choice);
+            invalidateData();
+            getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID,null,this);
             return true;
         }
         if (id==R.id.sort_top_rated){
             mRecyclerView.setVisibility(View.INVISIBLE);
             choice=BASE_URL+TOP_RATED_PATH+QUERY;
-            loadMoviesData(choice);
+            //loadMoviesData(choice);
+            invalidateData();
+            getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID,null,this);
             return true;
         }
 
@@ -80,7 +145,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mMovieAdapter = new MovieAdapter(this);
         mRecyclerView.setAdapter(mMovieAdapter);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-        loadMoviesData(choice);
+        //int loaderId=MOVIE_LOADER_ID;
+        //LoaderManager.LoaderCallbacks<Movie[]> callbacks=MainActivity.this;
+        //Bundle bundle=null;
+        getSupportLoaderManager().initLoader(MOVIE_LOADER_ID,null,MainActivity.this);
 
     }
 
@@ -91,51 +159,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         startActivity(intent);
     }
 
-    private class FetchMovies extends AsyncTask<String,Void, Movie[]>{
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
-        @Override
-        protected Movie[] doInBackground(String... strings) {
-            if (strings.length==0){
-                return null;
-            }
-            try{
-                return NetworkUtils.getMovies(strings[0]);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            return null;
-        }
 
-        @Override
-        protected void onPostExecute(Movie[] movies) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (movies != null) {
-                showMoviesDataView();
-                mMovieAdapter.setmMovieData(movies);
-            } else {
-                showErrorMessage();
-            }
-        }
-
-    }
-
-    private void loadMoviesData(String url) {
-        ConnectivityManager cm =
-                (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-        if (isConnected) {
-            new FetchMovies().execute(url);
-        }else{
-            new FetchMovies().execute((String)null);
-        }
-    }
 
     private void showMoviesDataView() {
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
