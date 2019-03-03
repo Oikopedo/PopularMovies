@@ -1,6 +1,8 @@
 package com.example.popularmovies.NetworkUtils;
 
 
+import android.util.Log;
+
 import com.example.popularmovies.Movie.Movie;
 
 import org.json.JSONArray;
@@ -21,6 +23,8 @@ public class NetworkUtils {
     private static final String KEY_SYNOPSIS="overview";
     private static final String KEY_RATING="vote_average";
     private static final String KEY_RELEASE_DATE="release_date";
+    private static final String TRAILER_PREFIX="http://api.themoviedb.org/3/movie/";
+    private static final String TRAILER_SUFFIX="/videos?api_key=1be795252d059d8804d4c2ff0386b872";
 
     private static String responseFromHttpGetRequest(String urlString)throws Exception{
         StringBuilder json = new StringBuilder();
@@ -33,12 +37,29 @@ public class NetworkUtils {
                 json.append(line + "\n");
             }
             in.close();
+            Log.v("SKATA",json.toString());
             return  json.toString();
 
         }catch (IOException e){
             e.printStackTrace();
         }finally {
             con.disconnect();
+        }
+        return null;
+    }
+
+    private static String[] parseTrailerRespone(String response){
+        try{
+            JSONObject obj=new JSONObject(response);
+            JSONArray res=obj.getJSONArray(KEY_RESULTS);
+            String[] trailers=new String[res.length()];
+            String trailer;
+            for (int i=0;i<trailers.length;i++){
+                trailers[i]=res.getJSONObject(i).getString("key");
+            }
+            return trailers;
+        }catch (JSONException e){
+            e.printStackTrace();
         }
         return null;
     }
@@ -77,5 +98,17 @@ public class NetworkUtils {
             return null;
         }
         return parseResponse(jsonResp);
+    }
+
+    public static String[] getTrailers(int movieId){
+        String urlString=TRAILER_PREFIX+String.valueOf(movieId)+TRAILER_SUFFIX;
+        String jsonResp;
+        try {
+            jsonResp=responseFromHttpGetRequest(urlString);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+        return parseTrailerRespone(jsonResp);
     }
 }
