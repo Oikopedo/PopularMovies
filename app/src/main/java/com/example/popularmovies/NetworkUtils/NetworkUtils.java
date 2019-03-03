@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class NetworkUtils {
+    private static final String KEY_ID="id";
     private static final String KEY_RESULTS="results";
     private static final String KEY_NAME="original_title";
     private static final String KEY_IMAGE_SOURCE="poster_path";
@@ -50,7 +51,8 @@ public class NetworkUtils {
             JSONObject movie;
             for (int i=0;i<movies.length;i++){
                 movie=res.getJSONObject(i);
-                movies[i]=new Movie(movie.getString(KEY_NAME)
+                movies[i]=new Movie(movie.getInt(KEY_ID)
+                        ,movie.getString(KEY_NAME)
                         ,movie.getString(KEY_IMAGE_SOURCE)
                         ,movie.getString(KEY_SYNOPSIS)
                         ,(float)movie.getDouble(KEY_RATING)
