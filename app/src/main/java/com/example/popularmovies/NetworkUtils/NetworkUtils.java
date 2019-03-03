@@ -4,6 +4,7 @@ package com.example.popularmovies.NetworkUtils;
 import android.util.Log;
 
 import com.example.popularmovies.Movie.Movie;
+import com.example.popularmovies.Movie.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NetworkUtils {
     private static final String KEY_ID="id";
@@ -48,15 +51,21 @@ public class NetworkUtils {
         return null;
     }
 
-    private static String[] parseTrailerRespone(String response){
+    private static List<Trailer> parseTrailerRespone(String response){
         try{
             JSONObject obj=new JSONObject(response);
             JSONArray res=obj.getJSONArray(KEY_RESULTS);
-            String[] trailers=new String[res.length()];
-            String trailer;
-            for (int i=0;i<trailers.length;i++){
-                trailers[i]=res.getJSONObject(i).getString("key");
+            List<Trailer> trailers=new ArrayList<>();
+            JSONObject trailer;
+            for (int i=0;i<res.length();i++){
+                trailer=res.getJSONObject(i);
+                if (trailer.getString("site").equals("YouTube")){
+                    trailers.add(new Trailer(trailer.getString("key"),trailer.getString("name"),trailer.getString("type")));
+                }
             }
+            //for(Trailer t:trailers){
+            //    Log.v("TRAILER",t.getName()+t.getType());
+            //}
             return trailers;
         }catch (JSONException e){
             e.printStackTrace();
@@ -100,7 +109,7 @@ public class NetworkUtils {
         return parseResponse(jsonResp);
     }
 
-    public static String[] getTrailers(int movieId){
+    public static List<Trailer> getTrailers(int movieId){
         String urlString=TRAILER_PREFIX+String.valueOf(movieId)+TRAILER_SUFFIX;
         String jsonResp;
         try {

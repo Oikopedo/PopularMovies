@@ -8,15 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.popularmovies.Movie.Trailer;
+
+import java.util.List;
 
 
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerAdapterViewHolder> {
-    private String[] mTrailerData;
+    private List<Trailer> mTrailerData;
     public static int height=200;
     private final TrailerAdapterOnClickHandler mClickHandler;
 
     public interface TrailerAdapterOnClickHandler {
-        void onClick(String trailer);
+        void onClick(Trailer trailer);
     }
 
     public TrailerAdapter(TrailerAdapter.TrailerAdapterOnClickHandler clickHandler) {
@@ -33,7 +36,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
         }
         @Override
         public void onClick(View v) {
-            mClickHandler.onClick(mTrailerData[getAdapterPosition()]);
+            mClickHandler.onClick(mTrailerData.get(getAdapterPosition()));
         }
     }
 
@@ -49,14 +52,14 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
 
     @Override
     public void onBindViewHolder(@NonNull TrailerAdapter.TrailerAdapterViewHolder trailerAdapterViewHolder, int i) {
-        trailerAdapterViewHolder.mTrailerTextView.setText(mTrailerData[i]);
+        trailerAdapterViewHolder.mTrailerTextView.setText(mTrailerData.get(i).getName()+mTrailerData.get(i).getType());
     }
     @Override
     public int getItemCount() {
         if (null == mTrailerData) return 0;
-        return mTrailerData.length;
+        return mTrailerData.size();
     }
-    public void setmTrailerData(String[] trailerData) {
+    public void setmTrailerData(List<Trailer> trailerData) {
         mTrailerData = trailerData;
         notifyDataSetChanged();
     }

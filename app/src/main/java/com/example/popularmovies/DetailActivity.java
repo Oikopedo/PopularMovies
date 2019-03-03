@@ -1,5 +1,7 @@
 package com.example.popularmovies;
 
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -20,13 +22,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.popularmovies.Movie.Movie;
+import com.example.popularmovies.Movie.Trailer;
 import com.example.popularmovies.NetworkUtils.NetworkUtils;
 import com.example.popularmovies.UIUtils.UIUtils;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 
 public class DetailActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<String[]>, TrailerAdapter.TrailerAdapterOnClickHandler {
+        implements LoaderManager.LoaderCallbacks<List<Trailer>>, TrailerAdapter.TrailerAdapterOnClickHandler {
 
     public final static String EXTRA="Movie";
     public final static String IMAGE_PATH="http://image.tmdb.org/t/p/w500/";
@@ -90,10 +95,10 @@ public class DetailActivity extends AppCompatActivity
 
     @NonNull
     @Override
-    public Loader<String[]> onCreateLoader(int id, @Nullable Bundle args) {
-        return new AsyncTaskLoader<String[]>(this) {
+    public Loader<List<Trailer>> onCreateLoader(int id, @Nullable Bundle args) {
+        return new AsyncTaskLoader<List<Trailer>>(this) {
 
-            String[] trailers=null;
+            List<Trailer> trailers=null;
 
             @Override
             protected void onStartLoading() {
@@ -106,7 +111,7 @@ public class DetailActivity extends AppCompatActivity
 
             @Nullable
             @Override
-            public String[] loadInBackground() {
+            public List<Trailer> loadInBackground() {
                 try{
                     return NetworkUtils.getTrailers(mMovie.getId());
                 }catch (Exception e){
@@ -116,8 +121,8 @@ public class DetailActivity extends AppCompatActivity
             }
 
             @Override
-            public void deliverResult(@Nullable String[] data) {
-                //Log.v("LENGTH",String.valueOf(data.length));
+            public void deliverResult(@Nullable List<Trailer> data) {
+                //Log.v("LENGTH",String.valueOf(data.size()));
                 trailers=data;
                 super.deliverResult(data);
             }
@@ -125,7 +130,7 @@ public class DetailActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLoadFinished(@NonNull Loader<String[]> loader, String[] data) {
+    public void onLoadFinished(@NonNull Loader<List<Trailer>> loader, List<Trailer> data) {
         mTrailerAdapter.setmTrailerData(data);
         setHeight();
         if (data==null){
@@ -136,7 +141,7 @@ public class DetailActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLoaderReset(@NonNull Loader<String[]> loader) {
+    public void onLoaderReset(@NonNull Loader<List<Trailer>> loader) {
 
     }
 
@@ -146,17 +151,29 @@ public class DetailActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClick(String trailer) {
-        Toast toast=Toast.makeText(this,"Not implemented: "+trailer,Toast.LENGTH_LONG);
-        toast.show();
+    public void onClick(Trailer trailer) {
+        //Toast toast=Toast.makeText(this,"Not implemented: "+trailer.getName(),Toast.LENGTH_LONG);
+        //toast.show();
+        watchYoutubeVideo(this,trailer.getKey());
 
+    }
+
+    public static void watchYoutubeVideo(Context context, String id){
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + id));
+        try {
+            context.startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            context.startActivity(webIntent);
+        }
     }
 
     private void setHeight(){
         ViewGroup.LayoutParams params = mTrailerRecyclerView.getLayoutParams();
         params.height =  TrailerAdapter.height*mTrailerAdapter.getItemCount();
-        Log.v("H",String.valueOf(TrailerAdapter.height));
-        Log.v("HEOGHT",String.valueOf( TrailerAdapter.height*mTrailerAdapter.getItemCount()));
+        //Log.v("H",String.valueOf(TrailerAdapter.height));
+        //Log.v("HEOGHT",String.valueOf( TrailerAdapter.height*mTrailerAdapter.getItemCount()));
         mTrailerRecyclerView.setLayoutParams(params);
         mTrailerRecyclerView.requestLayout();
     }
